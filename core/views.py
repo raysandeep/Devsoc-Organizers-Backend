@@ -46,7 +46,7 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
                 'token':token_serializer_class(token).data,
                 'user_type' : UserType.objects.filter(user=serializer.user)[0].type_of_user.category,
                 'username': serializer.user.username,
-                'name': serializer.user.first_name+serializer.user.last_name
+                'name': serializer.user.first_name+' '+serializer.user.last_name
             }
         except:
             return HttpResponse(status=404)
