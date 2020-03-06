@@ -8,5 +8,5 @@ from .models import (
 class EvaluatorSerializer(serializers.ModelSerializer):
     class Meta:
         model = evaluator
-        fields = '__all__'
+        fields = ['team']
         depth = 1
