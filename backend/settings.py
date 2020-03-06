@@ -132,7 +132,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 FCM_DJANGO_SETTINGS = {
-        "FCM_SERVER_KEY": "[your api key]"
+        "FCM_SERVER_KEY": "AAAA5T76nCs:APA91bF--GBdtXfZhkUmycNP6TfCKwbeQA9wtXDZJILtl_Djb65AOqVNh_KLKJPoXlsMc2Wq8T8sp4KP6KGye8wCfxkL3eLX_X8n6FcOa0M24t2B41Ufaz5K6RJVNOSxR_6bz4oO859b"
 }
 
 STATIC_URL = '/static/'

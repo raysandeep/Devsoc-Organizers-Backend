@@ -17,6 +17,8 @@ from djoser.compat import get_user_email
 from djoser.conf import settings
 User = get_user_model()
 from rest_framework.views import APIView
+from fcm_django.models import FCMDevice
+
 
 from .models import (
     evaluator,
@@ -83,6 +85,9 @@ class Message(APIView):
             serializer = MessagingSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
+                if not serializer.data['message_conf']:
+                    devices = FCMDevice.objects.all()
+                    devices.send_message(title=serializer.data['message_heading'], body=serializer.data['message_body'])
                 return Response(serializer.data, status=201)
             return Response(serializer.errors, status=400)
         else:
