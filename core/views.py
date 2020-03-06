@@ -75,7 +75,7 @@ class Message(APIView):
     def post(self,request):
         if not request.data._mutable:
             request.data._mutable = True
-            request.data['user']=request.user
+            request.data['user']=request.user.id
             request.data._mutable = False
             serializer = MessagingSerializer(data=request.data)
             if serializer.is_valid():
