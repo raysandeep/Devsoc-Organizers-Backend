@@ -74,7 +74,8 @@ class Message(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
         serializer = MessagingSerializer(data=request.data)
+        data['user']=request.user
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
