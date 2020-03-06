@@ -71,6 +71,7 @@ class evaluator(models.Model):
 
 class Messaging(models.Model):
     id = models.UUIDField(default=uuid.uuid4,primary_key=True)
+    team = models.ForeignKey(TeamInfo,on_delete=models.CASCADE)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     message_conf = models.BooleanField(default=False)#false for general and true for evaluation
     message_heading = models.CharField(max_length=100)

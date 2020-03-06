@@ -78,6 +78,7 @@ class Message(APIView):
         if not request.data._mutable:
             request.data._mutable = True
             request.data['user']=request.user.id
+            request.data['team']=TeamInfo.objects.filter(team_number=request.data['team'])[0].id
             request.data._mutable = False
             serializer = MessagingSerializer(data=request.data)
             if serializer.is_valid():
