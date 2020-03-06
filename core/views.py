@@ -21,11 +21,13 @@ from rest_framework.views import APIView
 from .models import (
     evaluator,
     TeamInfo,
-    UserType
+    UserType,
+    Messaging
 )
 
 from .serializers import(
-    EvaluatorSerializer
+    EvaluatorSerializer,
+    MessagingSerializer
 )
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -68,5 +70,11 @@ class EvaluatorList(APIView):
 
 
     
-
-
+class Message(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self,request):
+        serializer = MessagingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)

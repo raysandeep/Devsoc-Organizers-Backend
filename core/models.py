@@ -57,4 +57,12 @@ class evaluator(models.Model):
         return '{} - {} - Round - {}'.format(self.team.team_name,self.evaluator_object.user.username,self.round_level)
     
 
+class Messaging(models.Model):
+    id = models.UUIDField(default=uuid.uuid4,primary_key=True)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    message_conf = models.BooleanField(default=False)#false for general and true for evaluation
+    message_heading = models.CharField(max_length=00)
+    message_body = models.CharField(max_length=500)
+    def __str__(self):
+        return self.message_heading
 
