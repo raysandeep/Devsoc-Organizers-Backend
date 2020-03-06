@@ -17,14 +17,25 @@ track_choices = [
     ('Healthcare','Healthcare'),
     ('Fintech','Fintech'),
     ('Developer tools','Developer tools'),
-    ('IOT','IOT'),
+    ('Internet of Things','Internet of Things'),
     ('Sustainability','Sustainability'),
     ('Open Innovation','Open Innovation'),
     ('Blockchain','Blockchain')
 ]
+class Metrix(models.Model):
+    id =  models.UUIDField(default=uuid.uuid4,primary_key=True)
+    name = models.CharField(max_length=100)
+    category = models.CharField(max_length=100,choices=user_choices)
+    weightage = models.FloatField()
+
+    def __str__(self):
+        return self.name
+
+
+
 class UserType(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
-    type_of_user = models.CharField(default='Core-2nd Year',choices=user_choices,max_length=40)
+    type_of_user = models.ForeignKey(Metrix,on_delete=models.CASCADE)
     
     def __str__(self):
         return '{} - {}'.format(self.user.username,self.type_of_user)
@@ -67,3 +78,5 @@ class Messaging(models.Model):
     def __str__(self):
         return self.message_heading
 
+
+    
