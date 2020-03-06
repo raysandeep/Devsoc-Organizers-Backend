@@ -73,9 +73,20 @@ class EvaluatorList(APIView):
 class Message(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        request.data['user']=request.user
-        serializer = MessagingSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        if not request.data._mutable:
+            request.data._mutable = True
+            request.data['user']=request.user
+            request.data._mutable = False
+            serializer = MessagingSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+        else:
+            request.data['user']=request.user
+            serializer = MessagingSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+
