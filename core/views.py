@@ -56,12 +56,15 @@ class EvaluatorList(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
         try:
-            list_of_teams = evaluator.objects.filter(evaluator_object__user=request.user)
+            list_of_teams = evaluator.objects.filter(evaluator_object__user=request.user).filter(round_level=1)
         except evaluator.DoesNotExist:
             return HttpResponse(status=404)
         serializer = EvaluatorSerializer(list_of_teams, many=True)
-        print(serializer.data)
-        return Response(serializer.data)
+        data = {
+            'round':1,
+            'data':serializer.data
+        }
+        return Response(data)
 
 
     

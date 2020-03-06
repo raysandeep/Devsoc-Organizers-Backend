@@ -49,11 +49,12 @@ class TeamInfo(models.Model):
 
 class evaluator(models.Model):
     id = models.UUIDField(default=uuid.uuid4,primary_key=True)
+    round_level = models.IntegerField()
     evaluator_object = models.ForeignKey(UserType,on_delete=models.CASCADE)
     team = models.ForeignKey(TeamInfo,on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.team.team_name
+        return '{} - {} - Round - {}'.format(self.team.team_name,self.evaluator_object.user.username,self.round_level)
     
 
 
