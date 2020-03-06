@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'fcm_django',
+
 ]
 
 MIDDLEWARE = [
@@ -129,6 +131,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+FCM_DJANGO_SETTINGS = {
+        "FCM_SERVER_KEY": "[your api key]"
+}
 
 STATIC_URL = '/static/'
+
 django_heroku.settings(locals())

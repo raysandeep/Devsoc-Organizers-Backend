@@ -33,6 +33,7 @@ class TeamInfo(models.Model):
     id  = models.UUIDField(default=uuid.uuid4,primary_key=True)
     team_name = models.CharField(max_length=100)
     idea = models.TextField()
+    team_number = models.IntegerField()
     team_leader = models.CharField(max_length=50)
     team_leader_phone = models.CharField(max_length=50)
     team_memeber_1 = models.CharField(max_length=100,blank=True)
