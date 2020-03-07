@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view, permission_classes
+from pyfcm import FCMNotification
 
 from djoser import signals, utils
 from djoser.compat import get_user_email
@@ -24,12 +25,14 @@ from .models import (
     evaluator,
     TeamInfo,
     UserType,
-    Messaging
+    Messaging,
+    Notifications
 )
 
 from .serializers import(
     EvaluatorSerializer,
-    MessagingSerializer
+    MessagingSerializer,
+    NotificationSerilizer
 )
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -50,6 +53,7 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
                 'username': serializer.user.username,
                 'name': serializer.user.first_name+' '+serializer.user.last_name
             }
+        
         except:
             return HttpResponse(status=404)
         return Response(
@@ -72,7 +76,6 @@ class EvaluatorList(APIView):
         }
         return Response(data)
 
-
     
 class Message(APIView):
     permission_classes = [IsAuthenticated]
@@ -83,11 +86,16 @@ class Message(APIView):
             request.data['team']=TeamInfo.objects.filter(team_number=request.data['team'])[0].id
             request.data._mutable = False
             serializer = MessagingSerializer(data=request.data)
+            push_service = FCMNotification(api_key="AIzaSyD8v3e4a3v-rcasU3Mh0KKkPaflm1dW1J4")
             if serializer.is_valid():
                 serializer.save()
                 if not serializer.data['message_conf']:
-                    devices = FCMDevice.objects.all()
-                    devices.send_message(title=serializer.data['message_heading'], body=serializer.data['message_body'])
+                    devices = Notifications.objects.all().exclude(user=request.user)
+                    registration_ids=[]
+                    for i in devices:
+                        registration_ids.append(i.device_id)
+                    result = push_service.notify_multiple_devices(registration_ids=registration_ids, message_title=serializer.data['message_heading'], message_body=serializer.data['message_body'])
+                    print(result)
                 return Response(serializer.data, status=201)
             return Response(serializer.errors, status=400)
         else:
@@ -98,15 +106,15 @@ class Message(APIView):
                 return Response(serializer.data, status=201)
             return Response(serializer.errors, status=400)
 
-class Test(APIView):
+class NotificationView(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self,request):
-        dicti = {
-            'registration_id':request.GET['registration_id'],
-            'user':request.user,
-            'type':request.GET['type']
-        }
-        FCMDevice(**dicti).save()
-        return Response('OK', status=200)
+    def post(self,request):
+        serializer=NotificationSerilizer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=200)
+        else:
+            return Response(serializer.errors, status=400)
+
 
 

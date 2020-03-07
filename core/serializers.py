@@ -3,9 +3,10 @@ from .models import (
     evaluator,
     TeamInfo,
     UserType,
-    Messaging
+    Messaging,
+    Notifications
 )
-from fcm_django.models import Device
+
 
 class EvaluatorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,7 +20,9 @@ class MessagingSerializer(serializers.ModelSerializer):
         model = Messaging
         fields = '__all__'
 
-class FCMSerializer(serializers.ModelSerializer):
+
+
+class NotificationSerilizer(serializers.ModelSerializer):
     class Meta:
-        model = Device
+        model = Notifications
         fields = ['device_id']

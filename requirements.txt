@@ -18,3 +18,4 @@ whitenoise==5.0.1
 wrapt==1.11.2
 djoser
 fcm_django
+pyfcm

@@ -81,3 +81,10 @@ class Messaging(models.Model):
 
 
     
+class Notifications(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    device_id = models.CharField(max_length=300)
+
+    def __str__(self):
+        return self.device_id
+     
