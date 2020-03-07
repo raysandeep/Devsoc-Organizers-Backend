@@ -5,7 +5,8 @@ from . models import(
     TeamInfo,
     UserType,
     evaluator,
-    Metrix
+    Metrix,
+    Notifications
 )
 
 
@@ -13,3 +14,4 @@ admin.site.register(TeamInfo)
 admin.site.register(UserType)
 admin.site.register(evaluator)
 admin.site.register(Metrix)
+admin.site.register(Notifications)
