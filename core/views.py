@@ -88,7 +88,7 @@ class Message(APIView):
                 if not serializer.data['message_conf']:
                     devices = FCMDevice.objects.all()
                     devices.send_message(title=serializer.data['message_heading'], body=serializer.data['message_body'])
-                    return Response(serializer.data, status=201)
+                return Response(serializer.data, status=201)
             return Response(serializer.errors, status=400)
         else:
             request.data['user']=request.user
