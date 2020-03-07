@@ -90,7 +90,7 @@ class Message(APIView):
             if serializer.is_valid():
                 serializer.save()
                 if not serializer.data['message_conf']:
-                    devices = Notifications.objects.all().exclude(user=request.user)
+                    devices = Notifications.objects.all()#.exclude(user=request.user) UNCOMMMENT THIS IN FUTURE
                     registration_ids=[]
                     for i in devices:
                         registration_ids.append(i.device_id)
