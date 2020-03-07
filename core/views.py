@@ -32,7 +32,8 @@ from .models import (
 from .serializers import(
     EvaluatorSerializer,
     MessagingSerializer,
-    NotificationSerilizer
+    NotificationSerilizer,
+    EvaluationParamsSerializer
 )
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -117,4 +118,19 @@ class NotificationView(APIView):
             return Response(serializer.errors, status=400)
 
 
+
+class EvaluateView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self,request):
+        if not request.data._mutable:
+            request.data._mutable = True
+            evaluator_obj = evaluator.objects.filter(evaluator_object__user__id=request.user.id)[0]
+            request.data['evaluator']=evaluator_obj
+            request.data._mutable = False
+            serializer=EvaluationParamsSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(evaluator=evaluator_obj)
+                return Response(serializer.data, status=200)
+            else:
+                return Response(serializer.errors, status=400)
 

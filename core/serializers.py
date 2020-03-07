@@ -4,7 +4,8 @@ from .models import (
     TeamInfo,
     UserType,
     Messaging,
-    Notifications
+    Notifications,
+    EvaluationParms
 )
 
 
@@ -26,3 +27,10 @@ class NotificationSerilizer(serializers.ModelSerializer):
     class Meta:
         model = Notifications
         fields = ['device_id']
+
+
+
+class EvaluationParamsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EvaluationParms
+        fields = '__all__'

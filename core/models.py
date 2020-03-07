@@ -88,3 +88,22 @@ class Notifications(models.Model):
     def __str__(self):
         return self.device_id
      
+
+class EvaluationParms(models.Model):
+    id = models.UUIDField(default=uuid.uuid4,primary_key=True)
+    evaluator = models.OneToOneField(evaluator,on_delete=models.CASCADE)
+    tech_implementation_slider = models.IntegerField()
+    tech_implementation_box= models.CharField(max_length=300,default='Not Filled')
+    bussiness_model_slider = models.IntegerField()
+    bussiness_model_box = models.CharField(max_length=300,default='Not Filled')
+    marketic_strategy_slider = models.IntegerField()
+    marketic_strategy_box = models.CharField(max_length=300,default='Not Filled')
+    implementation_till_now_slider = models.IntegerField()
+    idea_feasilibity_slider = models.IntegerField()
+    idea_feasilibity_box = models.CharField(max_length=300,default='Not Filled')
+    remarks = models.CharField(max_length=300)
+    suggesstions_given = models.CharField(max_length=300,default='Not Filled')
+
+    def __str__(self):
+        return '{} - Evaluated by {} for round {} '.format(self.evaluator.team.team_name,self.evaluator.evaluator_object.user.username,self.evaluator.round_level)
+    
