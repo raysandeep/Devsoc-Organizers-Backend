@@ -88,7 +88,7 @@ class Message(APIView):
                 if not serializer.data['message_conf']:
                     devices = FCMDevice.objects.all()
                     devices.send_message(title=serializer.data['message_heading'], body=serializer.data['message_body'])
-                return Response(serializer.data, status=201)
+                    return Response(serializer.data, status=201)
             return Response(serializer.errors, status=400)
         else:
             request.data['user']=request.user
@@ -97,3 +97,16 @@ class Message(APIView):
                 serializer.save()
                 return Response(serializer.data, status=201)
             return Response(serializer.errors, status=400)
+
+class Test(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        dicti = {
+            'registration_id':request.GET['registration_id'],
+            'user':request.user,
+            'type':request.GET['type']
+        }
+        FCMDevice(**dicti).save()
+        return Response('OK', status=200)
+
+
