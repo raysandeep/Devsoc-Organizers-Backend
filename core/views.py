@@ -110,7 +110,7 @@ class Message(APIView):
 class NotificationView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        serializer=NotificationSerilizer(data=request.data)
+        serializer=NotificationSerilizer(data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=200)
@@ -133,4 +133,3 @@ class EvaluateView(APIView):
                 return Response(serializer.data, status=200)
             else:
                 return Response(serializer.errors, status=400)
-
