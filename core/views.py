@@ -18,7 +18,6 @@ from djoser.compat import get_user_email
 from djoser.conf import settings
 User = get_user_model()
 from rest_framework.views import APIView
-from fcm_django.models import FCMDevice
 
 
 from .models import (
@@ -26,7 +25,8 @@ from .models import (
     TeamInfo,
     UserType,
     Messaging,
-    Notifications
+    Notifications,
+    EvaluationParms
 )
 
 from .serializers import(
@@ -50,7 +50,7 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
         try: 
             data = {
                 'token':token_serializer_class(token).data,
-                'user_type' : UserType.objects.filter(user=serializer.user)[0].type_of_user.category,
+                'user_type' : UserType.objects.filter(user=serializer.user)[0].category,
                 'username': serializer.user.username,
                 'name': serializer.user.first_name+' '+serializer.user.last_name
             }
@@ -66,14 +66,42 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
 class EvaluatorList(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
+        list_of_teams=[]
+        completed_list = []
+        final_data_completed=[]
+        not_completed_list=[]
         try:
             list_of_teams = evaluator.objects.filter(evaluator_object__user=request.user).filter(round_level=1)
+            completed_list = EvaluationParms.objects.filter(evaluator__round_level=1).filter(evaluator__evaluator_object__user=request.user)
         except evaluator.DoesNotExist:
             return HttpResponse(status=404)
         serializer = EvaluatorSerializer(list_of_teams, many=True)
+        serializer1 = EvaluationParamsSerializer(completed_list, many=True)
+        
+        for i in serializer1.data:
+            team_details = {
+                'eval_id':i['evaluator']['id'],
+                'team_id':i['evaluator']['team']['id'],
+                'team_name':i['evaluator']['team']['team_name'],
+                'team_number':i['evaluator']['team']['team_number'],
+            }
+            final_data_completed.append(team_details)
+        
+        for i in serializer.data:
+            team_details = {
+                'eval_id':i['id'],
+                'team_id':i['team']['id'],
+                'team_name':i['team']['team_name'],
+                'team_number':i['team']['team_number'],
+            }
+            if team_details in final_data_completed:
+                pass
+            else:
+                not_completed_list.append(team_details)
         data = {
             'round':1,
-            'data':serializer.data
+            'data':not_completed_list,
+            'completed_data':final_data_completed
         }
         return Response(data)
 
@@ -122,14 +150,10 @@ class NotificationView(APIView):
 class EvaluateView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        if not request.data._mutable:
-            request.data._mutable = True
-            evaluator_obj = evaluator.objects.filter(evaluator_object__user__id=request.user.id)[0]
-            request.data['evaluator']=evaluator_obj
-            request.data._mutable = False
-            serializer=EvaluationParamsSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(evaluator=evaluator_obj)
-                return Response(serializer.data, status=200)
-            else:
-                return Response(serializer.errors, status=400)
+        serializer=EvaluationParamsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        else:
+            return Response(serializer.errors, status=400)
+

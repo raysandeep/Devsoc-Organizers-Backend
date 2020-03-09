@@ -8,9 +8,6 @@ user_choices  = [
     ('Core-1st Year','Core-1st Year'),
     ('Board', 'Board'),
     ('Judge','Judge'),
-    ('Speaker','Speaker'),
-    ('Faculty','Faculty'),
-    ('Others','Others')
 ]
 track_choices = [
     ('Security','Security'),
@@ -22,23 +19,17 @@ track_choices = [
     ('Open Innovation','Open Innovation'),
     ('Blockchain','Blockchain')
 ]
-class Metrix(models.Model):
-    id =  models.UUIDField(default=uuid.uuid4,primary_key=True)
-    name = models.CharField(max_length=100)
-    category = models.CharField(max_length=100,choices=user_choices)
-    weightage = models.FloatField()
-
-    def __str__(self):
-        return self.name
 
 
 
 class UserType(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
-    type_of_user = models.ForeignKey(Metrix,on_delete=models.CASCADE)
+    category = models.CharField(max_length=100,choices=user_choices)
     
     def __str__(self):
-        return '{} - {}'.format(self.user.username,self.type_of_user)
+        return '{} - {}'.format(self.user.username,self.category)
+
+
 
 class TeamInfo(models.Model):
     id  = models.UUIDField(default=uuid.uuid4,primary_key=True)
@@ -52,7 +43,7 @@ class TeamInfo(models.Model):
     team_memeber_3 = models.CharField(max_length=100,blank=True)
     team_memeber_4 = models.CharField(max_length=100,blank=True)
     track = models.CharField(max_length=100,choices=track_choices)
-
+    status = models.BooleanField(default=True)
 
     def __str__(self):
         return self.team_name
@@ -86,22 +77,21 @@ class Notifications(models.Model):
     device_id = models.CharField(max_length=300)
 
     def __str__(self):
-        return self.device_id
+        return self.user.username
      
 
 class EvaluationParms(models.Model):
     id = models.UUIDField(default=uuid.uuid4,primary_key=True)
     evaluator = models.OneToOneField(evaluator,on_delete=models.CASCADE)
-    tech_implementation_slider = models.IntegerField()
-    tech_implementation_box= models.CharField(max_length=300,default='Not Filled')
+    novelty_slider = models.IntegerField()
+    tech_feasability_slider = models.IntegerField()
+    work_done_slider = models.IntegerField(default=0)
+    impact_slider = models.IntegerField()
+    presentation_quality_slider = models.IntegerField()
     bussiness_model_slider = models.IntegerField()
-    bussiness_model_box = models.CharField(max_length=300,default='Not Filled')
-    marketic_strategy_slider = models.IntegerField()
-    marketic_strategy_box = models.CharField(max_length=300,default='Not Filled')
-    implementation_till_now_slider = models.IntegerField()
-    idea_feasilibity_slider = models.IntegerField()
-    idea_feasilibity_box = models.CharField(max_length=300,default='Not Filled')
+    scalability_slider = models.IntegerField()
     remarks = models.CharField(max_length=300)
+    notes = models.CharField(max_length=300,default='Not Filled')
     suggesstions_given = models.CharField(max_length=300,default='Not Filled')
 
     def __str__(self):

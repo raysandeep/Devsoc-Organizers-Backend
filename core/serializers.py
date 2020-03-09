@@ -12,7 +12,7 @@ from .models import (
 class EvaluatorSerializer(serializers.ModelSerializer):
     class Meta:
         model = evaluator
-        fields = ['team']
+        fields = ['team','id']
         depth = 1
 
 
@@ -34,3 +34,4 @@ class EvaluationParamsSerializer(serializers.ModelSerializer):
     class Meta:
         model = EvaluationParms
         fields = '__all__'
+        depth=2
