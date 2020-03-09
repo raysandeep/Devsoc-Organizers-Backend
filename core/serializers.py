@@ -35,3 +35,9 @@ class EvaluationParamsSerializer(serializers.ModelSerializer):
         model = EvaluationParms
         fields = '__all__'
         depth=2
+
+
+class TeamNamesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TeamInfo
+        fields = ['id','team_name','team_number']

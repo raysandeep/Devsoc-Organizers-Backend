@@ -33,7 +33,8 @@ from .serializers import(
     EvaluatorSerializer,
     MessagingSerializer,
     NotificationSerilizer,
-    EvaluationParamsSerializer
+    EvaluationParamsSerializer,
+    TeamNamesSerializer
 )
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -84,6 +85,8 @@ class EvaluatorList(APIView):
                 'team_id':i['evaluator']['team']['id'],
                 'team_name':i['evaluator']['team']['team_name'],
                 'team_number':i['evaluator']['team']['team_number'],
+                'team_track':i['evaluator']['team']['track'],
+
             }
             final_data_completed.append(team_details)
         
@@ -93,6 +96,8 @@ class EvaluatorList(APIView):
                 'team_id':i['team']['id'],
                 'team_name':i['team']['team_name'],
                 'team_number':i['team']['team_number'],
+                'team_track':i['team']['track'],
+
             }
             if team_details in final_data_completed:
                 pass
@@ -150,10 +155,30 @@ class NotificationView(APIView):
 class EvaluateView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
+        evaluator1 = evaluator.objects.filter(team__id=request.data['team_id']).filter(evaluator_object__user__id=request.user.id).filter(round_level=1)[0]
+        print(evaluator)
         serializer=EvaluationParamsSerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(evaluator=evaluator1)
             return Response(serializer.data, status=200)
         else:
             return Response(serializer.errors, status=400)
+    
+    def get(self,request):
+        try:
+            evaluator1 = evaluator.objects.filter(id=request.data['eval_id']).filter(evaluator_object__user__id=request.user.id).filter(round_level=1)[0]
+            evalparams = EvaluationParms.objects.filter(evaluator=evaluator1)
+        except evaluator.DoesNotExist:
+            return HttpResponse(status=404)
+        serializer = EvaluationParamsSerializer(evalparams, many=True)
+        return Response(serializer.data,status=200)
 
+
+
+class GetTeamNames(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        teams = TeamInfo.objects.all()
+        serializer = TeamNamesSerializer(teams,many=True)
+        return Response(serializer.data,status=200)
