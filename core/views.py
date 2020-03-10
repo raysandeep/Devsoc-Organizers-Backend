@@ -20,6 +20,10 @@ User = get_user_model()
 from rest_framework.views import APIView
 
 
+BOARD_METRIX =  0.8
+JUDGE_METRIX = 1
+CORE_METRIX = 0.7
+
 from .models import (
     evaluator,
     TeamInfo,
@@ -34,7 +38,9 @@ from .serializers import(
     MessagingSerializer,
     NotificationSerilizer,
     EvaluationParamsSerializer,
-    TeamNamesSerializer
+    TeamNamesSerializer,
+    TeamInfoSerializer,
+    EvalFinalSerializer
 )
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -186,3 +192,149 @@ class GetTeamNames(APIView):
         teams = TeamInfo.objects.all()
         serializer = TeamNamesSerializer(teams,many=True)
         return Response(serializer.data,status=200)
+
+
+
+
+class GetTeamInfo(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        metrix=0
+        round1={}
+        round2={}
+        round3={}
+        round1_list=[]
+        round2_list=[]
+        round3_list=[]
+
+        final_score = {
+            'round1':0,
+            'round2':0,
+            'round3':0
+        }
+        team = TeamInfo.objects.filter(id=request.data['team_id'])
+        print(team)
+        round1_eval = EvaluationParms.objects.filter(evaluator__team=team[0]).filter(evaluator__round_level=1)
+        round2_eval = EvaluationParms.objects.filter(evaluator__team=team[0]).filter(evaluator__round_level=2)
+        round3_eval = EvaluationParms.objects.filter(evaluator__team=team[0]).filter(evaluator__round_level=3)
+        round3_eval_tech =[]
+        teaminfo = TeamInfoSerializer(team, many=True)
+        round1 = EvalFinalSerializer(round1_eval,many=True).data
+        round2 = EvalFinalSerializer(round2_eval,many=True).data
+        round3 = EvalFinalSerializer(round3_eval,many=True).data
+        if round1_eval.count() != 0:
+            for i in round1:
+                
+                if i['evaluator']['evaluator_object']['category'] == 'Core-2nd Year':
+                    metrix=CORE_METRIX
+                elif i['evaluator']['evaluator_object']['category'] == 'Board':
+                    metrix=BOARD_METRIX
+                elif i['evaluator']['evaluator_object']['category'] == 'Judge':
+                    metrix=JUDGE_METRIX
+                score = (i['novelty_slider']+i['tech_feasability_slider']+i['impact_slider']+\
+                    i['presentation_quality_slider']+i['bussiness_model_slider']+\
+                        i['scalability_slider'])*metrix/6
+                eval_data = {
+                    'novelty_slider':i['novelty_slider'],
+                    'tech_feasability_slider':i['tech_feasability_slider'],
+                    'impact_slider':i['impact_slider'],
+                    'presentation_quality_slider':i['presentation_quality_slider'],
+                    'bussiness_model_slider':i['bussiness_model_slider'],
+                    'scalability_slider':i['scalability_slider'],
+                    'remarks':i['remarks'],
+                    'notes':i['notes'],
+                    'suggesstions_given':i['suggesstions_given'],
+                    'evalName':i['evaluator']['evaluator_object']['user']['first_name']+' '+i['evaluator']['evaluator_object']['user']['last_name'],
+                    'UserId':i['evaluator']['evaluator_object']['user']['id'],
+                    'userType':i['evaluator']['evaluator_object']['category'],
+                    'score':score
+                }
+                final_score['round1']+=score
+                round1_list.append(eval_data)
+                final_score['round1'] = final_score['round1']/round1_eval.count()
+        
+        if round2_eval.count() != 0:
+            for i in round2:
+                
+                if i['evaluator']['evaluator_object']['category'] == 'Core-2nd Year':
+                    metrix=CORE_METRIX
+                elif i['evaluator']['evaluator_object']['category'] == 'Board':
+                    metrix=BOARD_METRIX
+                elif i['evaluator']['evaluator_object']['category'] == 'Judge':
+                    metrix=JUDGE_METRIX
+                score = (i['novelty_slider']+i['tech_feasability_slider']+i['impact_slider']+\
+                    i['presentation_quality_slider']+i['bussiness_model_slider']+\
+                        i['scalability_slider'])*metrix/6
+                eval_data = {
+                    'novelty_slider':i['novelty_slider'],
+                    'tech_feasability_slider':i['tech_feasability_slider'],
+                    'impact_slider':i['impact_slider'],
+                    'presentation_quality_slider':i['presentation_quality_slider'],
+                    'bussiness_model_slider':i['bussiness_model_slider'],
+                    'scalability_slider':i['scalability_slider'],
+                    'remarks':i['remarks'],
+                    'notes':i['notes'],
+                    'suggesstions_given':i['suggesstions_given'],
+                    'evalName':i['evaluator']['evaluator_object']['user']['first_name']+' '+i['evaluator']['evaluator_object']['user']['last_name'],
+                    'UserId':i['evaluator']['evaluator_object']['user']['id'],
+                    'userType':i['evaluator']['evaluator_object']['category'],
+                    'score':score
+                }
+                final_score['round2']+=score
+                round2_list.append(eval_data)
+                final_score['round2']=final_score['round2']/round2_eval.count()
+
+        if round3_eval.count() != 0:
+            for i in round3:
+                
+                if i['evaluator']['evaluator_object']['category'] == 'Core-2nd Year':
+                    metrix=CORE_METRIX
+                elif i['evaluator']['evaluator_object']['category'] == 'Board':
+                    metrix=BOARD_METRIX
+                elif i['evaluator']['evaluator_object']['category'] == 'Judge':
+                    metrix=JUDGE_METRIX
+                score = (i['novelty_slider']+i['tech_feasability_slider']+i['impact_slider']+\
+                    i['presentation_quality_slider']+i['bussiness_model_slider']+\
+                        i['work_done_slider']+i['scalability_slider'])*metrix/7
+                eval_data = {
+                    'novelty_slider':i['novelty_slider'],
+                    'tech_feasability_slider':i['tech_feasability_slider'],
+                    'impact_slider':i['impact_slider'],
+                    'presentation_quality_slider':i['presentation_quality_slider'],
+                    'bussiness_model_slider':i['bussiness_model_slider'],
+                    'scalability_slider':i['scalability_slider'],
+                    'remarks':i['remarks'],
+                    'notes':i['notes'],
+                    'work_done_slider':i['work_done_slider'],
+                    'evalName':i['evaluator']['evaluator_object']['user']['first_name']+' '+i['evaluator']['evaluator_object']['user']['last_name'],
+                    'UserId':i['evaluator']['evaluator_object']['user']['id'],
+                    'userType':i['evaluator']['evaluator_object']['category'],
+                    'score':score
+                }
+                final_score['round3']+=score
+                round2_list.append(eval_data)
+                final_score['round3']=final_score['round3']/round3_eval.count()
+
+        data = {
+            'teamInfo':teaminfo.data,
+            'round1Eval':{
+                'FinalScore':final_score['round1'],
+                'data':round1_list
+            },
+            'round2Eval':{
+                'FinalScore':final_score['round2'],
+                'data':round2_list
+            },
+            'round3Eval':{
+                'FinalScore':final_score['round3'],
+                'data':round3_list
+            },
+            'finalScore':(final_score['round1']+final_score['round2']+final_score['round3'])/3
+            
+        }
+        return Response(data,status=200)
+
+
+
+
+

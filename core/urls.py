@@ -10,7 +10,7 @@ urlpatterns = [
     path('register/',views.NotificationView.as_view(),name="Message"),
     path('evaluvate/',views.EvaluateView.as_view(),name="eval"),
     path('team/names/',views.GetTeamNames.as_view(),name="teams"),
-
+    path('team/info/',views.GetTeamInfo.as_view(),name="team-info"),
     url(r'^auth/', include('djoser.urls')),
 ]
 

@@ -41,3 +41,16 @@ class TeamNamesSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamInfo
         fields = ['id','team_name','team_number']
+
+
+class TeamInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TeamInfo
+        fields = '__all__'
+
+
+class EvalFinalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EvaluationParms
+        fields = '__all__'
+        depth=3
