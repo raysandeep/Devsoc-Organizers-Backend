@@ -378,6 +378,8 @@ class GetTeamInfoSecond(APIView):
         mem_list=[]
         team = TeamInfo.objects.filter(id=id)
         print(team)
+        teaminfo = TeamInfoSerializer(team, many=True)
+
         
         team_status=''
         for abc in teaminfo.data:
