@@ -20,6 +20,7 @@ class MessagingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Messaging
         fields = '__all__'
+        depth=1
 
 
 
