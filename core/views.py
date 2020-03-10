@@ -143,12 +143,16 @@ class Message(APIView):
 class NotificationView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        serializer=NotificationSerilizer(data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=200)
+        if Notifications.objects.filter(user=request.user).exists():
+            Notifications.objects.filter(user=request.user).update(device_id=request.data['device_id'])
+            return HttpResponse(status=200)
         else:
-            return Response(serializer.errors, status=400)
+            serializer=NotificationSerilizer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(user=request.user)
+                return Response(serializer.data, status=200)
+            else:
+                return Response(serializer.errors, status=400)
 
 
 
