@@ -206,6 +206,7 @@ class GetTeamInfo(APIView):
         round1_list=[]
         round2_list=[]
         round3_list=[]
+        mem_list=[]
 
         final_score = {
             'round1':0,
@@ -222,6 +223,41 @@ class GetTeamInfo(APIView):
         round1 = EvalFinalSerializer(round1_eval,many=True).data
         round2 = EvalFinalSerializer(round2_eval,many=True).data
         round3 = EvalFinalSerializer(round3_eval,many=True).data
+
+
+
+        team_status=''
+        for abc in teaminfo.data:
+            if abc['team_memeber_1'] != '':
+                mem_list.append(abc['team_memeber_1'])
+            if abc['team_memeber_2'] != '':
+                mem_list.append(abc['team_memeber_2'])
+            if abc['team_memeber_3'] != '':
+                mem_list.append(abc['team_memeber_3'])
+            if abc['team_memeber_4'] != '':
+                mem_list.append(abc['team_memeber_4'])
+            if abc['status']==True:
+                team_status='Qualified'
+            else:
+                team_status='Disqualified'
+            team_details = {
+                'id':abc['id'],
+                'team_name':abc['team_name'],
+                'idea':abc['idea'],
+                'team_number':abc['team_number'],
+                'team_leader':abc['team_leader'],
+                'team_leader_phone':abc['team_leader_phone'],
+                'team_mem':mem_list,
+                'track':abc['track'],
+                'status':team_status
+            }
+            break
+
+
+
+
+
+
         if round1_eval.count() != 0:
             for i in round1:
                 
@@ -316,7 +352,7 @@ class GetTeamInfo(APIView):
                 final_score['round3']=final_score['round3']/round3_eval.count()
 
         data = {
-            'teamInfo':teaminfo.data,
+            'teamInfo':team_details,
             'round1Eval':{
                 'FinalScore':final_score['round1'],
                 'data':round1_list
