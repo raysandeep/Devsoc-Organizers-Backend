@@ -218,12 +218,12 @@ class GetTeamInfo(APIView):
         round1_eval = EvaluationParms.objects.filter(evaluator__team=team[0]).filter(evaluator__round_level=1)
         round2_eval = EvaluationParms.objects.filter(evaluator__team=team[0]).filter(evaluator__round_level=2)
         round3_eval = EvaluationParms.objects.filter(evaluator__team=team[0]).filter(evaluator__round_level=3)
-        round3_eval_tech =[]
+        messages_serializer = Messaging.objects.filter(team__id=id)
         teaminfo = TeamInfoSerializer(team, many=True)
         round1 = EvalFinalSerializer(round1_eval,many=True).data
         round2 = EvalFinalSerializer(round2_eval,many=True).data
         round3 = EvalFinalSerializer(round3_eval,many=True).data
-
+        messages = MessagingSerializer(messages_serializer,many=True)
 
 
         team_status=''
@@ -365,7 +365,8 @@ class GetTeamInfo(APIView):
                 'FinalScore':final_score['round3'],
                 'data':round3_list
             },
-            'finalScore':(final_score['round1']+final_score['round2']+final_score['round3'])/3
+            'finalScore':(final_score['round1']+final_score['round2']+final_score['round3'])/3,
+            'messages':messages.data
             
         }
         return Response(data,status=200)
