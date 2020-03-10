@@ -40,7 +40,8 @@ from .serializers import(
     EvaluationParamsSerializer,
     TeamNamesSerializer,
     TeamInfoSerializer,
-    EvalFinalSerializer
+    EvalFinalSerializer,
+    UserTypeSerializer
 )
 
 class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
@@ -410,5 +411,26 @@ class GetTeamInfoSecond(APIView):
         return Response(team_details,status=200)
 
 
+class UserInfo(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        users = UserType.objects.all()
+        serializer=UserTypeSerializer(users,many=True)
+        my_list=[]
+        for i in serializer.data:
+            data = {
+                
+                'userType':i['category'],
+                'fullName':i['user']['first_name']+' '+i['user']['last_name'],
+                'username':i['user']['username'],
+                'user_id':i['user']['id']
+            }
+            my_list.append(data)
+
+        resp = {
+            'usersCount':len(my_list),
+            'data':my_list
+        }
+        return Response(resp,status=200)
 
 

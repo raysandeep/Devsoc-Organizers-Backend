@@ -55,3 +55,9 @@ class EvalFinalSerializer(serializers.ModelSerializer):
         model = EvaluationParms
         fields = '__all__'
         depth=3
+    
+class UserTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserType
+        fields = '__all__'
+        depth=1
