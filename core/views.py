@@ -155,7 +155,7 @@ class NotificationView(APIView):
 class EvaluateView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        evaluator1 = evaluator.objects.filter(team__id=request.data['team_id']).filter(evaluator_object__user__id=request.user.id).filter(round_level=1)[0]
+        evaluator1 = evaluator.objects.filter(id=request.data['evaluator']).filter(evaluator_object__user__id=request.user.id).filter(round_level=1)[0]
         print(evaluator)
         serializer=EvaluationParamsSerializer(data=request.data)
         print(request.data)

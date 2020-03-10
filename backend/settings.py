@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import django_heroku 
+Token c478e81a3a63d940618505e59bf5b77f917f4508import django_heroku 
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
