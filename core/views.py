@@ -372,6 +372,41 @@ class GetTeamInfo(APIView):
         return Response(data,status=200)
 
 
+class GetTeamInfoSecond(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request,id):
+        mem_list=[]
+        team = TeamInfo.objects.filter(id=id)
+        print(team)
+        
+        team_status=''
+        for abc in teaminfo.data:
+            if abc['team_memeber_1'] != '':
+                mem_list.append(abc['team_memeber_1'])
+            if abc['team_memeber_2'] != '':
+                mem_list.append(abc['team_memeber_2'])
+            if abc['team_memeber_3'] != '':
+                mem_list.append(abc['team_memeber_3'])
+            if abc['team_memeber_4'] != '':
+                mem_list.append(abc['team_memeber_4'])
+            if abc['status']==True:
+                team_status='Qualified'
+            else:
+                team_status='Disqualified'
+            team_details = {
+                'id':abc['id'],
+                'team_name':abc['team_name'],
+                'idea':abc['idea'],
+                'team_number':abc['team_number'],
+                'team_leader':abc['team_leader'],
+                'team_leader_phone':abc['team_leader_phone'],
+                'team_mem':mem_list,
+                'track':abc['track'],
+                'status':team_status
+            }
+            break
+        return Response(team_details,status=200)
+
 
 
 

@@ -11,6 +11,9 @@ urlpatterns = [
     path('evaluvate/',views.EvaluateView.as_view(),name="eval"),
     path('team/names/',views.GetTeamNames.as_view(),name="teams"),
     path('team/info/<str:id>/',views.GetTeamInfo.as_view(),name="team-info"),
+    path('team/info/second/<str:id>/',views.GetTeamInfoSecond.as_view(),name="team-info-2"),
+
+
     url(r'^auth/', include('djoser.urls')),
 ]
 
