@@ -6,7 +6,8 @@ from . models import(
     UserType,
     evaluator,
     EvaluationParms,
-    Notifications
+    Notifications,
+    Messaging
 )
 
 admin.site.register(EvaluationParms)
@@ -14,3 +15,4 @@ admin.site.register(TeamInfo)
 admin.site.register(UserType)
 admin.site.register(evaluator)
 admin.site.register(Notifications)
+admin.site.register(Messaging)
