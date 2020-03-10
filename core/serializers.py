@@ -19,7 +19,7 @@ class EvaluatorSerializer(serializers.ModelSerializer):
 class MessagingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Messaging
-        fields = '__all__'
+        fields = ['message_head','message_body']
         depth=1
 
 
