@@ -198,7 +198,7 @@ class GetTeamNames(APIView):
 
 class GetTeamInfo(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self,request):
+    def get(self,request,id):
         metrix=0
         round1={}
         round2={}
@@ -213,7 +213,7 @@ class GetTeamInfo(APIView):
             'round2':0,
             'round3':0
         }
-        team = TeamInfo.objects.filter(id=request.data['team_id'])
+        team = TeamInfo.objects.filter(id=id)
         print(team)
         round1_eval = EvaluationParms.objects.filter(evaluator__team=team[0]).filter(evaluator__round_level=1)
         round2_eval = EvaluationParms.objects.filter(evaluator__team=team[0]).filter(evaluator__round_level=2)
