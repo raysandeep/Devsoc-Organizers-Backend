@@ -130,7 +130,7 @@ class Message(APIView):
             serializer = MessagingSerializer(data=request.data)
             push_service = FCMNotification(api_key="AIzaSyD8v3e4a3v-rcasU3Mh0KKkPaflm1dW1J4")
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(user=request.user)
                 if not serializer.data['message_conf']:
                     devices = Notifications.objects.all()#.exclude(user=request.user) UNCOMMMENT THIS IN FUTURE
                     registration_ids=[]
