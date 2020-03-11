@@ -442,14 +442,13 @@ class UserInfo(APIView):
 class AssignMember(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        try:
-            mem_list = request.data['members']
-            team_id = request.data['team_id']
-            team = TeamInfo.objects.filter(id=team_id)[0]
-            for i in mem_list:
-                eval = UserType.objects.filter(user__id=i)[0]
-                serializer = evaluator(team=team,evaluator_object=eval,round_level=ROUND_LEVEL)
-                serializer.save()
-            return Response({'status':'done'},status=200)
-        except:
-            return Response({'status':'something went wrong'},status=400)        
+        
+        mem_list = request.data['members']
+        team_id = request.data['team_id']
+        team = TeamInfo.objects.filter(id=team_id)[0]
+        for i in mem_list:
+            eval = UserType.objects.filter(user__id=i)[0]
+            serializer = evaluator(team=team,evaluator_object=eval,round_level=ROUND_LEVEL)
+            serializer.save()
+        return Response({'status':'done'},status=200)
+        
