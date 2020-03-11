@@ -37,6 +37,8 @@ from .models import (
 from .serializers import(
     EvaluatorSerializer,
     MessagingSerializer,
+    Messaging1Serializer,
+
     NotificationSerilizer,
     EvaluationParamsSerializer,
     TeamNamesSerializer,
@@ -124,12 +126,14 @@ class Message(APIView):
     def post(self,request):
         if not request.data._mutable:
             request.data._mutable = True
-            request.data['user']=request.user
+            request.data['user']=User.objects.filter(id=request.user.id)[0].id
             request.data['team']=TeamInfo.objects.filter(team_number=request.data['team'])[0].id
             request.data._mutable = False
             serializer = MessagingSerializer(data=request.data)
+            print(request.data)
             push_service = FCMNotification(api_key="AIzaSyD8v3e4a3v-rcasU3Mh0KKkPaflm1dW1J4")
             if serializer.is_valid():
+                print(serializer.validated_data)
                 serializer.save(user=request.user)
                 if not serializer.data['message_conf']:
                     devices = Notifications.objects.all()#.exclude(user=request.user) UNCOMMMENT THIS IN FUTURE
@@ -225,7 +229,7 @@ class GetTeamInfo(APIView):
         round1 = EvalFinalSerializer(round1_eval,many=True).data
         round2 = EvalFinalSerializer(round2_eval,many=True).data
         round3 = EvalFinalSerializer(round3_eval,many=True).data
-        messages = MessagingSerializer(messages_serializer,many=True)
+        messages = Messaging1Serializer(messages_serializer,many=True)
 
 
         team_status=''

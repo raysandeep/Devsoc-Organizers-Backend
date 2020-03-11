@@ -16,12 +16,16 @@ class EvaluatorSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class MessagingSerializer(serializers.ModelSerializer):
+class Messaging1Serializer(serializers.ModelSerializer):
     class Meta:
         model = Messaging
         fields = ['message_heading','user','message_body']
         depth=1
 
+class MessagingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Messaging
+        fields = '__all__'
 
 
 class NotificationSerilizer(serializers.ModelSerializer):
