@@ -448,4 +448,4 @@ class AssignMember(APIView):
                 serializer.save()
             return Response({'status':'done'},status=200)
         except:
-            return Response({'status':'something went wrong',status=400})        
+            return Response({'status':'something went wrong'},status=400)        
