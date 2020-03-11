@@ -13,6 +13,7 @@ urlpatterns = [
     path('team/info/<str:id>/',views.GetTeamInfo.as_view(),name="team-info"),
     path('team/info/second/<str:id>/',views.GetTeamInfoSecond.as_view(),name="team-info-2"),
     path('members/',views.UserInfo.as_view(),name="mem-list"),
+    path('members/assign/',views.AssignMember.as_view(),name="assign"),
 
     url(r'^auth/', include('djoser.urls')),
 ]

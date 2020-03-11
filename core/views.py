@@ -19,6 +19,7 @@ from djoser.conf import settings
 User = get_user_model()
 from rest_framework.views import APIView
 
+ROUND_LEVEL = 1
 
 BOARD_METRIX =  0.8
 JUDGE_METRIX = 1
@@ -79,7 +80,7 @@ class EvaluatorList(APIView):
         final_data_completed=[]
         not_completed_list=[]
         try:
-            list_of_teams = evaluator.objects.filter(evaluator_object__user=request.user).filter(round_level=1)
+            list_of_teams = evaluator.objects.filter(evaluator_object__user=request.user).filter(round_level=ROUND_LEVEL)
             completed_list = EvaluationParms.objects.filter(evaluator__round_level=1).filter(evaluator__evaluator_object__user=request.user)
         except evaluator.DoesNotExist:
             return HttpResponse(status=404)
@@ -111,7 +112,7 @@ class EvaluatorList(APIView):
             else:
                 not_completed_list.append(team_details)
         data = {
-            'round':1,
+            'round':ROUND_LEVEL,
             'data':not_completed_list,
             'completed_data':final_data_completed
         }
@@ -123,7 +124,7 @@ class Message(APIView):
     def post(self,request):
         if not request.data._mutable:
             request.data._mutable = True
-            request.data['user']=request.user.id
+            request.data['user']=request.user
             request.data['team']=TeamInfo.objects.filter(team_number=request.data['team'])[0].id
             request.data._mutable = False
             serializer = MessagingSerializer(data=request.data)
@@ -166,7 +167,7 @@ class NotificationView(APIView):
 class EvaluateView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        evaluator1 = evaluator.objects.filter(id=request.data['evaluator']).filter(evaluator_object__user__id=request.user.id).filter(round_level=1)[0]
+        evaluator1 = evaluator.objects.filter(id=request.data['evaluator']).filter(evaluator_object__user__id=request.user.id).filter(round_level=ROUND_LEVEL)[0]
         print(evaluator)
         serializer=EvaluationParamsSerializer(data=request.data)
         print(request.data)
@@ -178,7 +179,7 @@ class EvaluateView(APIView):
     
     def get(self,request):
         try:
-            evaluator1 = evaluator.objects.filter(id=request.data['eval_id']).filter(evaluator_object__user__id=request.user.id).filter(round_level=1)[0]
+            evaluator1 = evaluator.objects.filter(id=request.data['eval_id']).filter(evaluator_object__user__id=request.user.id).filter(round_level=ROUND_LEVEL)[0]
             evalparams = EvaluationParms.objects.filter(evaluator=evaluator1)
         except evaluator.DoesNotExist:
             return HttpResponse(status=404)
@@ -434,3 +435,17 @@ class UserInfo(APIView):
         return Response(resp,status=200)
 
 
+class AssignMember(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        try:
+            mem_list = request.data['members']
+            team_id = request.data['team_id']
+            team = TeamInfo.objects.filter(id=team_id)[0]
+            for i in mem_list:
+                eval = UserType.objects.filter(user__id=i)[0]
+                serializer = evaluator(team=team,evaluator_object=eval,round_level=ROUND_LEVEL)
+                serializer.save()
+            return Response({'status':'done'},status=200)
+        except:
+            return Response({'status':'something went wrong',status=400})        
