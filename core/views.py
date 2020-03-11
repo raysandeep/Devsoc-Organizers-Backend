@@ -437,7 +437,7 @@ class UserInfo(APIView):
 
 class AssignMember(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self,request):
+    def post(self,request):
         try:
             mem_list = request.data['members']
             team_id = request.data['team_id']
