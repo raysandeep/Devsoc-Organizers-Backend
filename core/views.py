@@ -445,7 +445,13 @@ class AssignMember(APIView):
         
         mem_list = request.data['members']
         team_id = request.data['team_id']
-        team = TeamInfo.objects.filter(id=team_id)[0]
+        try:
+            team = TeamInfo.objects.filter(id=team_id)[0]
+        except: 
+            pass
+        print('ok')
+        mem_list = mem_list.split('[')[1].split(']')[0].split(',')
+        print(mem_list)
         for i in mem_list:
             eval = UserType.objects.filter(user__id=i)[0]
             serializer = evaluator(team=team,evaluator_object=eval,round_level=ROUND_LEVEL)
